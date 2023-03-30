@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">OnlyDigits</string>
+    <string name="target_number">%d ± 0</string>
+    <string name="new_palette">New</string>
+    <string name="undo">Undo</string>
+    <string name="solve">Solve</string>
+    <string name="one">%d</string>
+    <string name="two">%d</string>
+    <string name="three">%d</string>
+    <string name="four">%d</string>
+    <string name="five">%d</string>
+    <string name="six">%d</string>
+    <string name="add">+</string>
+    <string name="sub">-</string>
+    <string name="mul">*</string>
+    <string name="div">/</string>
+    <string name="steps">STEPS</string>
+</resources>
