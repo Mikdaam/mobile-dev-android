@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dice_text">サイコロの値: %d</string>
+    <string name="quit_text">やめる</string>
+    <string name="app_name">DiceGame</string>
+</resources>
