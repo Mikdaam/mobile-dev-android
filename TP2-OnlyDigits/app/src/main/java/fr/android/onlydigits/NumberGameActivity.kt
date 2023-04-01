@@ -1,152 +1,208 @@
 package fr.android.onlydigits
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 
 class NumberGameActivity : AppCompatActivity() {
+
+    // Properties with view binding using the KTX extension functions.
     private val newTargetButton by lazy { findViewById<Button>(R.id.new_target) }
+    private val undoButton by lazy { findViewById<Button>(R.id.undo) }
+    private val solveButton by lazy { findViewById<Button>(R.id.solve) }
     private val targetText by lazy { findViewById<TextView>(R.id.target_text) }
-    private val plateletButtonsString = listOf(R.string.one, R.string.two, R.string.three, R.string.four, R.string.five, R.string.six)
-    private val plateletButtonsId = listOf(R.id.one, R.id.two, R.id.three, R.id.four, R.id.five, R.id.six)
-    private val plateletButtons by lazy { plateletButtonsId.map { id -> findViewById<Button>(id) } }
-    private val plateletActive = mutableListOf(true, true, true, true, true, true)
-    private val operatorButtonIds = listOf(R.id.add, R.id.sub, R.id.mul, R.id.div)
-    private val operatorButtons by lazy { operatorButtonIds.map { id -> findViewById<Button>(id) } }
-    private var opActive = false
+    private val plateletButtonsTextId = listOf(R.string.one, R.string.two, R.string.three, R.string.four, R.string.five, R.string.six)
+    private val plateletButtons by lazy {
+        listOf(R.id.one, R.id.two, R.id.three, R.id.four, R.id.five, R.id.six).map { id ->
+            findViewById<Button>(id)
+        }
+    }
+    private val operatorButtons by lazy {
+        listOf(R.id.add, R.id.sub, R.id.mul, R.id.div).map { id ->
+            findViewById<Button>(id)
+        }
+    }
     private val stepsText by lazy { findViewById<TextView>(R.id.steps) }
+    private val winningText by lazy { findViewById<TextView>(R.id.won) }
+
+    // Initialize properties with constant values.
+    private var targetNumber = generateTargetNumber()
+    private var currentLeftOperandIndex = -1
+    private lateinit var currentState: State
+    private val states = ArrayList<State>()
+    private var currentPlateletButtonState = List(6) { true }
+    private val plateletButtonStates = ArrayList<List<Boolean>>()
+    private var operatorActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_number_game)
 
-        val elements = ElementPicker.buildFromResources(this, R.raw.numberfrequencies) { s -> s.toInt()}
-        val interval = 101..999
-        val nbOfPlatelets = 6
+        currentState = State(generatePlateletValues(this), listOf())
+        states.add(currentState)
+        plateletButtonStates.add(currentPlateletButtonState)
 
-        var targetNumber = interval.random()
-        val states = ArrayList<State>();
-        var currentState = State(elements.pickElements(nbOfPlatelets) as MutableList<Int>, listOf())
+        displayState(currentPlateletButtonState)
 
-        displayState(currentState, targetNumber)
-        operatorButtons.forEach { btn -> toggleButton(btn, opActive) }
+        // Handle the "New Target" button click event using a separate method.
+        newTargetButton.setOnClickListener { handleNewTargetButton(this) }
 
-        newTargetButton.setOnClickListener {
-            states.clear()
-            currentState = State(elements.pickElements(nbOfPlatelets) as MutableList<Int>, listOf())
-            targetNumber = interval.random();
-            opActive = false
+        // Handle the "Undo" button click event using a separate method.
+        undoButton.setOnClickListener { handleUndoButton() }
 
-            displayState(currentState, targetNumber)
+        // Handle the "Solve" button click event using a separate method.
+        solveButton.setOnClickListener { handleSolveButton() }
 
-            operatorButtons.forEach { btn -> toggleButton(btn, opActive) }
-        }
-
-        var leftId = -1
-
-        // listener on platelet buttons
-        for (button in plateletButtons) {
+        // Handle the platelet button click events using a separate method.
+        plateletButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
-                val value = button.text.toString().toInt();
-                val s = currentState
-                if (currentState.leftOperand == null) {
-                    leftId = plateletButtonsId.indexOf(button.id)
-
-                    opActive = !opActive
-                    disableButtons(plateletButtons)
-
-                    // get left value
-                    currentState = currentState.copy(leftOperand = value)
-                    operatorButtons.forEach { btn -> toggleButton(btn, opActive) }
-                } else {
-                    // compute the operation if it write value
-                    if (s.operator != null && s.leftOperand != null) {
-                        val operation = Operation(s.leftOperand, value, s.operator)
-
-                        currentState.plateletValues[leftId] = operation.result
-                        currentState = currentState.copy(leftOperand = null, operator = null, operations = currentState.operations + operation)
-
-                        plateletActive[leftId] = true
-                        plateletActive[plateletButtonsId.indexOf(button.id)] = false
-                        displayState(currentState, targetNumber)
-
-                        states += currentState
-                    }
-                }
+                handlePlateletButton(index, button.text.toString().toInt())
             }
         }
 
-        // listener on operator buttons
-        for (button in operatorButtons) {
+        // Handle the operator button click events using a separate method.
+        operatorButtons.forEach { button ->
             button.setOnClickListener {
-                val op = button.text.toString()
-
-                currentState = currentState.copy(operator = op)
-
-                opActive = !opActive
-                enableButtons(plateletButtons)
-                plateletActive[leftId] = false
-                displayState(currentState, targetNumber)
-                // operator buttons
-                operatorButtons.forEach { btn -> toggleButton(btn, opActive) }
+                handleOperatorButton(button.text.toString())
             }
         }
     }
 
-    private fun displayState(s: State, targetNumber: Int) {
+    private fun displayState(buttonsState: List<Boolean>) {
         // target number
         targetText.text = resources.getString(R.string.target_number, targetNumber)
 
+        val isUndoable = states.size > 1
+        undoButton.toggle(isUndoable)
+
         // tiles buttons
-        for (i in plateletButtons.indices) {
-            plateletButtons[i].text = resources.getString(plateletButtonsString[i], s.plateletValues[i])
-            // toggle all the buttons
-            toggleButton(plateletButtons[i], plateletActive[i])
+        plateletButtons.forEachIndexed { index, button ->
+            button.text = getString(plateletButtonsTextId[index], currentState.plateletValues[index])
+            button.toggle(buttonsState[index])
         }
 
-        // display steps
-        val steps = StringBuilder();
-        s.operations.forEach(steps::append)
-        stepsText.text = steps.toString()
+        // operators button
+        operatorButtons.forEach { it.toggle(operatorActive) }
+
+        stepsText.text = currentState.operations.joinToString("")
+
+        val res = currentState.operations.lastOrNull()?.result
+        if (targetNumber == res)
+            winningText.text = getString(R.string.win)
     }
 
-    /*private fun displayDraw(targetNumber: Int, plateletsNumbers: List<Int>) {
-        targetText.text = resources.getString(R.string.target_number, targetNumber)
-        for (i in plateletButtons.indices) {
-            plateletButtons[i].text = resources.getString(plateletButtonsString[i], plateletsNumbers[i])
+    // Initialize the game elements using the resources.
+    private fun generatePlateletValues(context: Context): List<Int> {
+        return ElementPicker.buildFromResources(
+            context,
+            R.raw.numberfrequencies
+        ) { s -> s.toInt() }.pickElements(6)
+    }
+
+    // Generate a random target number.
+    private fun generateTargetNumber(): Int {
+        return (101..999).random()
+    }
+
+    // Handle the "New Target" button click event.
+    private fun handleNewTargetButton(context: Context) {
+        states.clear()
+        plateletButtonStates.clear()
+
+        targetNumber = generateTargetNumber()
+        currentState = State(generatePlateletValues(context), listOf())
+        currentPlateletButtonState = List(6) { true }
+        operatorActive = false
+
+        states.add(currentState)
+        plateletButtonStates.add(currentPlateletButtonState)
+
+        solveButton.toggle(true)
+        displayState(currentPlateletButtonState)
+    }
+
+    // Handle the platelet button click event.
+    private fun handlePlateletButton(plateletIndex: Int, plateletValue: Int) {
+        val s = currentState
+        if (currentState.leftOperand == null) {
+            // get left operand
+            currentState = currentState.copy(leftOperand = plateletValue)
+
+            currentLeftOperandIndex = plateletIndex
+            operatorActive = !operatorActive
+
+            displayState(currentPlateletButtonState.map { false })
+        } else if (s.operator != null && s.leftOperand != null) {
+            // compute the operation if it write value
+            val operation = Operation(s.leftOperand, Operator.fromString(s.operator), plateletValue)
+            val result = operation.result!!
+
+            val newValues = currentState.plateletValues.mapIndexed { index, value ->
+                if (index == currentLeftOperandIndex) result else value
+            }
+            currentState = currentState.copy(
+                leftOperand = null,
+                operator = null,
+                plateletValues = newValues,
+                operations = currentState.operations + operation
+            )
+            states += currentState
+
+            currentPlateletButtonState = currentPlateletButtonState.mapIndexed { index, value ->
+                if (index == plateletIndex) false else value
+            }
+            plateletButtonStates.add(currentPlateletButtonState)
+
+            displayState(currentPlateletButtonState)
         }
-    }*/
-
-    private fun undo(s: State) {
-
     }
 
-    private fun disableButtons(buttons: List<Button>) {
-        for (button in buttons) {
-            disableButton(button)
+    // Handle the operator button click event.
+    private fun handleOperatorButton(operator: String) {
+        currentState = currentState.copy(operator = operator)
+
+        operatorActive = !operatorActive
+        displayState(currentPlateletButtonState.mapIndexed { index, value -> if (index == currentLeftOperandIndex) false else value })
+    }
+
+    // Handle the undo button click event.
+    private fun handleUndoButton() {
+        val prevStateId = states.lastIndex - 1
+
+        currentState = states[prevStateId]
+        currentPlateletButtonState = plateletButtonStates[prevStateId]
+
+        states.removeLast()
+        plateletButtonStates.removeLast()
+
+        displayState(currentPlateletButtonState)
+    }
+
+    // Handle the solve button click event.
+    private fun handleSolveButton() {
+        solveButton.toggle(false)
+        undoButton.toggle(false)
+        plateletButtons.forEach { it.toggle(false) }
+
+        val steps = CountSolver().solve(targetNumber, states.first().plateletValues)
+        val solution = steps.firstOrNull()?.operations?.reversed()?.joinToString(separator = "\n")
+
+        stepsText.text = if (solution != null) {
+            getString(R.string.solution_text, solution)
+        } else {
+            getString(R.string.no_solution_text)
         }
     }
 
-    private fun disableButton(button: Button) {
-        button.isEnabled = false
-        button.isClickable = false
-    }
-
-    private fun enableButtons(buttons: List<Button>) {
-        for (button in buttons) {
-            enableButton(button)
-        }
-    }
-
-    private fun toggleButton(button: Button, active: Boolean) {
-        button.isEnabled = active
-        button.isClickable = active
-    }
-
-    private fun enableButton(button: Button) {
-        button.isEnabled = true
-        button.isClickable = true
+    /**
+     *
+     * Toggles the enabled and clickable state of a button.
+     * @param active true if the button should be enabled and clickable, false otherwise
+    */
+    private fun Button.toggle(active: Boolean) {
+        this.isEnabled = active
+        this.isClickable = active
     }
 }
