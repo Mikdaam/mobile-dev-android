@@ -86,7 +86,7 @@ class NumberGameActivity : AppCompatActivity() {
         // operators button
         operatorButtons.forEach { it.toggle(operatorActive) }
 
-        stepsText.text = currentState.operations.joinToString("")
+        stepsText.text = currentState.operations.joinToString("\n")
 
         val res = currentState.operations.lastOrNull()?.result
         if (targetNumber == res)
