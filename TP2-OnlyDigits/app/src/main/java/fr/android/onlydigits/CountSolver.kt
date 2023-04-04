@@ -59,13 +59,12 @@ class CountSolver {
 data class CountResult(val operations: List<Operation>, val result: Int)
 
 data class Operation(val operand1: Int, val operator: Operator, val operand2: Int) {
-     val result: Int?
-        get() = when(operator) {
-            Operator.ADD -> operand1 + operand2
-            Operator.SUB -> operand1 - operand2
-            Operator.MUL -> operand1 * operand2
-            Operator.DIV -> if (operand2 == 0 || operand1 % operand2 != 0) null else operand1 / operand2
-        }?.takeIf { it >= 0 }
+     val result: Int? get() = when(operator) {
+        Operator.ADD -> operand1 + operand2
+        Operator.SUB -> if (operand1 < operand2) null else operand1 - operand2
+        Operator.MUL -> operand1 * operand2
+        Operator.DIV -> if (operand2 == 0 || operand1 % operand2 != 0) null else operand1 / operand2
+     }?.takeIf { it >= 0 }
 
     override fun toString(): String {
         return "$operand1 ${operator.symbol} $operand2 = $result"

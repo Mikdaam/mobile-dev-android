@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 
 class NumberGameActivity : AppCompatActivity() {
 
@@ -137,7 +138,14 @@ class NumberGameActivity : AppCompatActivity() {
         } else if (s.operator != null && s.leftOperand != null) {
             // compute the operation if it write value
             val operation = Operation(s.leftOperand, Operator.fromString(s.operator), plateletValue)
-            val result = operation.result!!
+            val result = operation.result
+
+            if (result == null) {
+                Toast.makeText(this, "Can't perform that operation", Toast.LENGTH_LONG).show()
+                operatorActive = !operatorActive
+                operatorButtons.forEach { it.toggle(operatorActive) }
+                return;
+            }
 
             val newValues = currentState.plateletValues.mapIndexed { index, value ->
                 if (index == currentLeftOperandIndex) result else value
