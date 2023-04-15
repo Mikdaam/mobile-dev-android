@@ -9,7 +9,10 @@ import androidx.compose.ui.unit.sp
 import fr.android.countryflag.R
 
 val QuickSand = FontFamily(
-    Font(R.font.quicksand_regular),
+    Font(R.font.quicksand_regular)
+)
+
+val QuickSandBold = FontFamily(
     Font(R.font.quicksand_bold, FontWeight.Bold)
 )
 // Set of Material typography styles to start with
