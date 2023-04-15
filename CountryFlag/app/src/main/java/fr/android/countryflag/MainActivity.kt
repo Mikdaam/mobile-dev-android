@@ -3,14 +3,15 @@ package fr.android.countryflag
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import fr.android.countryflag.countries.ALL_COUNTRIES
 import fr.android.countryflag.country.CountryFactList
+import fr.android.countryflag.country.CountryMultiFactDisplayer
 import fr.android.countryflag.fact.Fact
 import fr.android.countryflag.ui.theme.CountryFlagTheme
 
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    CountryFactList(ALL_COUNTRIES, Fact.POPULATION)
+                    CountryMultiFactDisplayer()
                 }
             }
         }
