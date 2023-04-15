@@ -16,7 +16,7 @@ fun IcelandicFlag() {
     Column(
         Modifier
             .fillMaxSize()
-            .aspectRatio(ratio = 1.389f)) {
+    ) {
         Row(
             Modifier
                 .fillMaxWidth()

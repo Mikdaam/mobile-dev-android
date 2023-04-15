@@ -14,7 +14,7 @@ fun PolishFlag() {
     Column(
         Modifier
             .fillMaxSize()
-            .aspectRatio(ratio = 1.6f)) {
+    ) {
         Box(
             Modifier
                 .fillMaxWidth()
