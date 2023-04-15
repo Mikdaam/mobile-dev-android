@@ -4,15 +4,19 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import fr.android.countryflag.countries.ALL_COUNTRIES
+import fr.android.countryflag.countries.Country
+import fr.android.countryflag.fact.Fact
 
 @Composable
-fun CountryFactGrid() {
+fun CountryFactGrid(countries: List<Country>, fact: Fact) {
+    val sortedCountry = countries.sortedByDescending { fact.extractor(it) }
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3)
+        columns = GridCells.Adaptive(minSize = 100.dp)
     ) {
-        itemsIndexed(ALL_COUNTRIES) { index, country ->
-            CountryFactGridItem(country = country, index = index)
+        itemsIndexed(sortedCountry) { index, country ->
+            CountryFactGridItem(country = country, index = index + 1)
         }
     }
 }

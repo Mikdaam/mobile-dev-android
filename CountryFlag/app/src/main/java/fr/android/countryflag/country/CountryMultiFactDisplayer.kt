@@ -13,9 +13,10 @@ fun CountryMultiFactDisplayer() {
         Header(
             fact = currentFact,
             onChange = { currentFact = it },
-            countries = countries, 
+            countries = countries,
             onSort = { countries = it.reversed() }
         )
-        CountryFactList(countries, currentFact)
+        //CountryFactList(countries, currentFact)
+        CountryFactGrid(countries, currentFact)
     }
 }

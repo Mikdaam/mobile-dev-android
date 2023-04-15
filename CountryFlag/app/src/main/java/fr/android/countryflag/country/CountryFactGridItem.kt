@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.android.countryflag.countries.Country
@@ -14,11 +15,22 @@ import fr.android.countryflag.ui.theme.QuickSandBold
 
 @Composable
 fun CountryFactGridItem(country: Country, index: Int) {
-    Box(Modifier.height(100.dp)) {
+    Box(Modifier
+        .height(150.dp)
+        .padding(10.dp)
+    ) {
         Column {
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                text = "#$index ${country.name}",
+                color = Color(0xFF454545),
+                fontSize = 12.sp,
+                fontFamily = QuickSandBold,
+                fontStyle = FontStyle.Italic,
+                textAlign = TextAlign.Center
+            )
+            /*Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    text = "#$index",
+                    text = "#$index ${country.name}",
                     color = Color(0xFF454545),
                     fontSize = 16.sp,
                     fontFamily = QuickSandBold,
@@ -30,7 +42,7 @@ fun CountryFactGridItem(country: Country, index: Int) {
                     fontSize = 20.sp,
                     fontFamily = QuickSand
                 )
-            }
+            }*/
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
@@ -41,8 +53,9 @@ fun CountryFactGridItem(country: Country, index: Int) {
             Text(
                 text = "${country.population} people",
                 color = Color(0xFF454545),
-                fontSize = 20.sp,
+                fontSize = 12.sp,
                 fontFamily = QuickSand,
+                textAlign = TextAlign.Center
             )
         }
     }
