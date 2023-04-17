@@ -13,8 +13,9 @@ import fr.android.countryflag.fact.Fact
 fun CountryMultiFactDisplayer() {
     Column {
         var currentFact by remember { mutableStateOf(Fact.POPULATION) }
-        var countries by remember { mutableStateOf(ALL_COUNTRIES) }
+        var countries by remember { mutableStateOf(ALL_COUNTRIES.sortedByDescending { currentFact.extractor(it) }) }
         var listView by remember { mutableStateOf(true) }
+        var descendingSort by remember { mutableStateOf(true) }
 
         Header(
             fact = currentFact,
@@ -22,11 +23,14 @@ fun CountryMultiFactDisplayer() {
             countries = countries,
             onSort = { countries = it },
             listView,
-            onChangeView = { listView = it }
+            onChangeView = { listView = it },
+            descendingSort,
+            changeOrder = { descendingSort = it }
         )
         Box(Modifier.background(color = Color(0xFFF8F7F7))) {
+            val high = if (descendingSort) countries.first() else countries.last()
             if (listView) {
-                CountryFactList(countries, currentFact)
+                CountryFactList(countries, currentFact, high)
             } else {
                 CountryFactGrid(countries, currentFact)
             }

@@ -10,11 +10,10 @@ import fr.android.countryflag.fact.Fact
 
 @Composable
 fun CountryFactGrid(countries: List<Country>, fact: Fact) {
-    val sortedCountry = countries.sortedByDescending { fact.extractor(it) }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 100.dp)
     ) {
-        itemsIndexed(sortedCountry) { index, country ->
+        itemsIndexed(countries) { index, country ->
             CountryFactGridItem(country = country, index = index + 1, fact)
         }
     }

@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import fr.android.countryflag.countries.ALL_COUNTRIES
+import fr.android.countryflag.countries.Benin
 import fr.android.countryflag.country.CountryFactList
 import fr.android.countryflag.country.CountryMultiFactDisplayer
 import fr.android.countryflag.fact.Fact
@@ -37,6 +38,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     CountryFlagTheme {
-        CountryFactList(ALL_COUNTRIES, Fact.POPULATION)
+        CountryFactList(ALL_COUNTRIES, Fact.POPULATION, Benin)
     }
 }

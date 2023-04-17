@@ -3,8 +3,7 @@ package fr.android.countryflag.country
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.List
-import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,8 +18,10 @@ fun Header(
     onChange: (Fact) -> Unit,
     countries: List<Country>,
     onSort: (List<Country>) -> Unit,
-    view: Boolean,
-    onChangeView: (Boolean) -> Unit
+    listView: Boolean,
+    onChangeView: (Boolean) -> Unit,
+    descendingOrder: Boolean,
+    changeOrder: (Boolean) -> Unit
 ) {
     Row(
         Modifier
@@ -34,12 +35,21 @@ fun Header(
         ) {
             FactSelector(fact = fact, onChange = onChange)
         }
-        IconButton(onClick = { onSort.invoke(countries.asReversed()) }) {
+        val sorted = if (descendingOrder) {
+            countries.sortedBy { fact.extractor(it) }
+        } else {
+            countries.sortedByDescending { fact.extractor(it) }
+        }
+
+        IconButton(onClick = { onSort.invoke(sorted); changeOrder(!descendingOrder) }) {
             Icon(Icons.Rounded.Refresh, "Sort list")
         }
 
-        IconButton(onClick = { onChangeView.invoke(!view) }) {
-            Icon(Icons.Rounded.List, "Change view")
+        IconButton(onClick = { onChangeView.invoke(!listView) }) {
+            Icon(
+                if (listView) Icons.Rounded.Clear else Icons.Rounded.List,
+                "Change listView"
+            )
         }
     }
 }
