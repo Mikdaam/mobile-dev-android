@@ -12,14 +12,12 @@ import fr.android.countryflag.fact.Fact
 
 @Composable
 fun CountryFactList(countries: List<Country>, fact: Fact) {
-    val sortedCountry = countries.sortedByDescending { fact.extractor(it) }
+    
     val high = sortedCountry[0]
-    Box(Modifier.background(color = Color(0xFFF8F7F7))) {
-        LazyColumn {
-            itemsIndexed(sortedCountry) {id, country ->
-                CountryFactListItem(country = country, index = id + 1, fact, high)
-                //Divider()
-            }
+    LazyColumn {
+        itemsIndexed(sortedCountry) {id, country ->
+            CountryFactListItem(country = country, index = id + 1, fact, high)
+            //Divider()
         }
     }
 }

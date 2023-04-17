@@ -14,7 +14,14 @@ import fr.android.countryflag.fact.Fact
 import fr.android.countryflag.fact.ui.FactSelector
 
 @Composable
-fun Header(fact: Fact, onChange: (Fact) -> Unit, countries: List<Country>, onSort: (List<Country>) -> Unit) {
+fun Header(
+    fact: Fact,
+    onChange: (Fact) -> Unit,
+    countries: List<Country>,
+    onSort: (List<Country>) -> Unit,
+    view: Boolean,
+    onChangeView: (Boolean) -> Unit
+) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -27,11 +34,11 @@ fun Header(fact: Fact, onChange: (Fact) -> Unit, countries: List<Country>, onSor
         ) {
             FactSelector(fact = fact, onChange = onChange)
         }
-        IconButton(onClick = { onSort.invoke(countries) }) {
+        IconButton(onClick = { onSort.invoke(countries.asReversed()) }) {
             Icon(Icons.Rounded.Refresh, "Sort list")
         }
 
-        IconButton(onClick = {  }) {
+        IconButton(onClick = { onChangeView.invoke(!view) }) {
             Icon(Icons.Rounded.List, "Change view")
         }
     }
