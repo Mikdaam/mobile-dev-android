@@ -29,9 +29,9 @@ fun CountryMultiFactDisplayer(navigate: (Boolean, Country) -> Unit) {
             changeOrder = { descendingSort = it }
         )
         Box(Modifier.background(color = Color(0xFFF8F7F7))) {
-            val high = if (descendingSort) countries.first() else countries.last()
+            val high = remember { derivedStateOf { countries.first() } }
             if (listView) {
-                CountryFactList(countries, currentFact, high, navigate)
+                CountryFactList(countries, currentFact, high.value, navigate)
             } else {
                 CountryFactGrid(countries, currentFact, navigate)
             }

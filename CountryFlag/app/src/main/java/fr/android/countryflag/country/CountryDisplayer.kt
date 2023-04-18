@@ -46,7 +46,7 @@ fun CountryDisplayer(country: Country, navigate: (Boolean) -> Unit) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Top App Bar")
+                    Text(text = country.name)
                 },
                 navigationIcon = {
                     IconButton(onClick = { navigate.invoke(false) }) {
@@ -64,7 +64,7 @@ fun CountryDisplayer(country: Country, navigate: (Boolean) -> Unit) {
                 .fillMaxSize()
                 .padding(paddingValues = it)
                 .background(
-                    brush = Brush.sweepGradient(
+                    brush = Brush.linearGradient(
                         listOf(
                             Color(0xFF718BE7),
                             Color(0xFF71B6EB)
@@ -92,7 +92,7 @@ fun CountryDisplayer(country: Country, navigate: (Boolean) -> Unit) {
 
             Column(
                 Modifier
-                    .background(Color(0xFFD1E8FD), shape = RoundedCornerShape(5.dp))
+                    .background(Color(0xFF32506B), shape = RoundedCornerShape(5.dp))
                     .padding(5.dp)
             ) {
                 FactRow(FactName = "Population", FactValue = "${country.population}")

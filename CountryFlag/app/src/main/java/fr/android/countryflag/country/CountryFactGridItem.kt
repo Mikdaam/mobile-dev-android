@@ -34,7 +34,7 @@ fun CountryFactGridItem(country: Country, index: Int, fact: Fact, navigate: (Boo
             Column(
                 Modifier
                     .background(
-                        brush = Brush.horizontalGradient(
+                        brush = Brush.linearGradient(
                             listOf(
                                 Color(0xFF718BE7),
                                 Color(0xFF71B6EB)

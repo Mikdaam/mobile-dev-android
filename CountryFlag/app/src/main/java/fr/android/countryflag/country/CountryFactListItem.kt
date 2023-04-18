@@ -30,7 +30,7 @@ fun CountryFactListItem(country: Country, index: Int, fact: Fact, highest: Count
             .padding(5.dp)
             .height(80.dp)
             .background(
-                brush = Brush.horizontalGradient(
+                brush = Brush.linearGradient(
                     listOf(
                         Color(0xFF718BE7),
                         Color(0xFF71B6EB)
