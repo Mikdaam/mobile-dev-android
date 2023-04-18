@@ -9,12 +9,12 @@ import fr.android.countryflag.countries.Country
 import fr.android.countryflag.fact.Fact
 
 @Composable
-fun CountryFactGrid(countries: List<Country>, fact: Fact) {
+fun CountryFactGrid(countries: List<Country>, fact: Fact, navigate: (Boolean, Country) -> Unit) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 100.dp)
+        columns = GridCells.Adaptive(minSize = 100.dp),
     ) {
         itemsIndexed(countries) { index, country ->
-            CountryFactGridItem(country = country, index = index + 1, fact)
+            CountryFactGridItem(country = country, index = index + 1, fact, navigate)
         }
     }
 }

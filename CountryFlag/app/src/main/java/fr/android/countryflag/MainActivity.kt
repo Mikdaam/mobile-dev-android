@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    CountryMultiFactDisplayer()
+                    RootUI()
                 }
             }
         }
@@ -38,6 +38,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     CountryFlagTheme {
-        CountryFactList(ALL_COUNTRIES, Fact.POPULATION, Benin)
+        RootUI()
     }
 }

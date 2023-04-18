@@ -11,10 +11,10 @@ import fr.android.countryflag.countries.Country
 import fr.android.countryflag.fact.Fact
 
 @Composable
-fun CountryFactList(countries: List<Country>, fact: Fact, highestFact: Country) {
+fun CountryFactList(countries: List<Country>, fact: Fact, highestFact: Country, navigate: (Boolean, Country) -> Unit) {
     LazyColumn {
         itemsIndexed(countries) {id, country ->
-            CountryFactListItem(country = country, index = id + 1, fact, highestFact)
+            CountryFactListItem(country = country, index = id + 1, fact, highestFact, navigate)
             //Divider()
         }
     }

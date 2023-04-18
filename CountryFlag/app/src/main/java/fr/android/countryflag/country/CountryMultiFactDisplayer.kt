@@ -7,10 +7,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import fr.android.countryflag.countries.ALL_COUNTRIES
+import fr.android.countryflag.countries.Country
 import fr.android.countryflag.fact.Fact
 
 @Composable
-fun CountryMultiFactDisplayer() {
+fun CountryMultiFactDisplayer(navigate: (Boolean, Country) -> Unit) {
     Column {
         var currentFact by remember { mutableStateOf(Fact.POPULATION) }
         var countries by remember { mutableStateOf(ALL_COUNTRIES.sortedByDescending { currentFact.extractor(it) }) }
@@ -30,9 +31,9 @@ fun CountryMultiFactDisplayer() {
         Box(Modifier.background(color = Color(0xFFF8F7F7))) {
             val high = if (descendingSort) countries.first() else countries.last()
             if (listView) {
-                CountryFactList(countries, currentFact, high)
+                CountryFactList(countries, currentFact, high, navigate)
             } else {
-                CountryFactGrid(countries, currentFact)
+                CountryFactGrid(countries, currentFact, navigate)
             }
         }
     }
