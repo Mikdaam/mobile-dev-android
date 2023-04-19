@@ -12,8 +12,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ChronometerManager() {
-    var start by remember { mutableStateOf(0L) }
-    var end by remember { mutableStateOf(-1L) }
+    var start by remember { mutableStateOf(System.currentTimeMillis()) }
+    var end by remember { mutableStateOf(System.currentTimeMillis()) }
+    var isStopped by remember { mutableStateOf(false) }
 
     Column(
         Modifier
@@ -21,6 +22,7 @@ fun ChronometerManager() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround
     ) {
+
         Chronometer(startTime = start, endTime = end, onTimeChanged = {})
 
         Row(
@@ -32,8 +34,10 @@ fun ChronometerManager() {
                 onClick = {
                     start = System.currentTimeMillis()
                     end = -1L
+                    isStopped = !isStopped
                 },
-                Modifier.clip(RoundedCornerShape(10.dp))
+                Modifier.clip(RoundedCornerShape(10.dp)),
+                enabled = !isStopped
             ) {
                 Text(text = "Start")
             }
@@ -41,9 +45,10 @@ fun ChronometerManager() {
             Button(
                 onClick = {
                     end = System.currentTimeMillis()
-                    start = 0L
+                    isStopped = !isStopped
                 },
-                Modifier.clip(RoundedCornerShape(10.dp))
+                Modifier.clip(RoundedCornerShape(10.dp)),
+                enabled = isStopped
             ) {
                 Text(text = "Stop")
             }
