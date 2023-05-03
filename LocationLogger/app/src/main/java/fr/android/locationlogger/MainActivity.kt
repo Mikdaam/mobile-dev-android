@@ -15,7 +15,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import fr.android.locationlogger.ui.theme.LocationLoggerTheme
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -25,7 +24,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RequestPermission(permission = Manifest.permission.ACCESS_FINE_LOCATION)
+                    Geolocator()
                 }
             }
         }
