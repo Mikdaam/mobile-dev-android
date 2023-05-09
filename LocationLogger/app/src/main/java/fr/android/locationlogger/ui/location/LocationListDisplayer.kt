@@ -1,12 +1,13 @@
-package fr.android.locationlogger
+package fr.android.locationlogger.ui.location
 
 import android.location.Location
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import fr.android.locationlogger.data.Geolocation
 
 @Composable
-fun LocationListDisplayer(locations: List<Location>) {
+fun LocationListDisplayer(locations: List<Geolocation>) {
     LazyColumn {
         items(locations) { location ->
             LocationDisplayer(

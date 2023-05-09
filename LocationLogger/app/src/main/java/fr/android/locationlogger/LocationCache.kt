@@ -8,17 +8,8 @@ import kotlinx.coroutines.flow.update
 
 object LocationCache {
     private val _locationList = MutableStateFlow<List<Location>>(emptyList())
-
-    val locationList: StateFlow<List<Location>>
-        get() = _locationList.asStateFlow()
-
+    val locationList = _locationList.asStateFlow()
     fun addLocation(location: Location) {
-        _locationList.update { locations ->
-            val updatedLocations = mutableListOf(location)
-            updatedLocations.addAll(locations.take(MAX_LOCATION_COUNT - 1))
-            updatedLocations
-        }
+        _locationList.update { locations -> locations + location }
     }
-
-    private const val MAX_LOCATION_COUNT = 10
 }

@@ -1,4 +1,4 @@
-package fr.android.locationlogger
+package fr.android.locationlogger.ui.location
 
 import android.text.format.DateUtils
 import androidx.compose.foundation.background
