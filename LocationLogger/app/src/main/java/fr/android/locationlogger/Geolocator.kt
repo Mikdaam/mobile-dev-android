@@ -5,7 +5,6 @@ import android.content.Context
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Bundle
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,7 +54,6 @@ fun Geolocator() {
 
             override fun onProviderDisabled(provider: String) {}
             override fun onProviderEnabled(provider: String) {}
-            override fun onStatusChanged(provider: String, status: Int, extras: Bundle?) {}
         }
 
         val hasPermission = permissionState.status.isGranted
