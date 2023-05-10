@@ -21,7 +21,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -35,29 +38,29 @@ import fr.android.locationlogger.data.LocationDatabase
 import fr.android.locationlogger.ui.location.LocationDisplayer
 import fr.android.locationlogger.ui.location.LocationListDisplayer
 
-@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun Geolocator() {
-    val context = LocalContext.current
+fun Geolocator(context: Context) {
     val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 
     val db = LocationDatabase.getInstance(context)
     val locationDAO = db.geolocationDAO()
 
-    val (location, setLocation)  = mutableStateOf<Location>(Location(LocationManager.FUSED_PROVIDER))
+    var location by remember{mutableStateOf(Location(LocationManager.FUSED_PROVIDER))}
     //val locationList by LocationCache.locationList.collectAsState()
 
     DisposableEffect(Unit) {
         val locationListener = LocationListener {
-            setLocation(it)
+            location = it
+            Log.d("Geolocator", "Location received: $it")
+            locationDAO.saveLocation(Geolocation(time = it.time, latitude = it.latitude, longitude = it.longitude))
         }
 
         val hasPermission = permissionState.status.isGranted
         if (hasPermission) {
             try {
-                locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, 5_000L, 0.1f, locationListener)
+                locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, 10_000L, 2f, locationListener)
             } catch (e: SecurityException) {
                 // Handle the case where the permission was revoked by the user or the system
                 Log.e("Geolocator", "Permission revoked")
@@ -101,9 +104,6 @@ fun Geolocator() {
                     latitude = location.latitude,
                     longitude = location.longitude
                 )
-                Button(onClick = { locationDAO.saveLocation(Geolocation(time = location.time, latitude = location.latitude, longitude = location.longitude)) }) {
-                    Text("Save location")
-                }
                 Divider()
                 LocationListDisplayer(locations = locationDAO.getAllLocations().collectAsState(initial = emptyList()).value.takeLast(MAX_LOCATIONS))
             } else {
